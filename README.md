@@ -1,4 +1,7 @@
-# construct.h
+<div align="center">
+    <img src="assets/LOGO.png", width="200"/>
+    <h1>construct.h</h1>
+</div>
 
 A single-header C library for building projects with minimal dependencies using build recipes in C itself. Provides dynamic arrays, string manipulation, process management, and CONSTRUCT build system (similar to Make).
 
