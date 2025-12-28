@@ -5,7 +5,7 @@
 
 A single-header C library for building projects with minimal dependencies using build recipes in C itself. Provides dynamic arrays, string manipulation, process management, and CONSTRUCT build system (similar to Make).
 
-Inspired by and simplified from [nob.h](https://github.com/tsoding/nob.h), with additional features for incremental builds.
+Inspired by and simplified from [nob.h](https://github.com/tsoding/nob.h), with additional features.
 
 ## Features
 
@@ -42,7 +42,7 @@ Similarities:
 - Process management
 
 Differences:
-- Added CONSTRUCT build system for incremental builds
+- Added CONSTRUCT build system for make-like syntax
 - Simplified API
 - Less LOC and better code structure
 - Additional utilities (See additional features in Dynamic Arrays, Misc, Short cicuiting, String View)
