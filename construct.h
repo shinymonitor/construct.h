@@ -98,9 +98,6 @@
 #define CONSTRUCT_da_append_many(da, new_items, new_items_count) do {CONSTRUCT_da_reserve((da), (da)->count + (new_items_count)); memcpy((da)->items + (da)->count, (new_items), (new_items_count)*sizeof(*(da)->items)); (da)->count += (new_items_count);} while (0)
 #define CONSTRUCT_da_resize(da, new_size) do {CONSTRUCT_da_reserve((da), new_size); (da)->count = (new_size);} while (0)
 
-#define CONSTRUCT_da_items(da) (da)->items
-#define CONSTRUCT_da_get(da, index) (CONSTRUCT_ASSERT((da)->count>index), (da)->items[index])
-#define CONSTRUCT_da_last(da) (da)->items[(CONSTRUCT_ASSERT((da)->count > 0), (da)->count-1)]
 #define CONSTRUCT_da_remove_unordered(da, i) do {size_t j = (i); CONSTRUCT_ASSERT(j < (da)->count); (da)->items[j] = (da)->items[--(da)->count];} while(0)
 #define CONSTRUCT_da_foreach(Type, it, da) for (Type* it = (da)->items; it < (da)->items + (da)->count; ++it)
 #define CONSTRUCT_da_reset(da) (da)->count=0
@@ -204,15 +201,15 @@ CONSTRUCT_da_define(char, CONSTRUCT_StringBuilder);
 #define CONSTRUCT_sb_append_str(sb, str)  do {const char* s = (str); size_t n = strlen(s); CONSTRUCT_da_append_many(sb, s, n);} while (0)
 #define CONSTRUCT_sb_append_null(sb) CONSTRUCT_da_append(sb, '\0')
 
-#define CONSTRUCT_sb_items(sb) CONSTRUCT_da_items((sb))
-#define CONSTRUCT_sb_get(sb, index) CONSTRUCT_da_get((sb), index)
+#define CONSTRUCT_sb_items(sb) (sb)->items
+#define CONSTRUCT_sb_get(sb, index) (CONSTRUCT_ASSERT((sb)->count>index), (sb)->items[index])
+#define CONSTRUCT_sb_last(sb) (sb)->items[(CONSTRUCT_ASSERT((sb)->count > 0), (sb)->count-1)]
+#define CONSTRUCT_sb_remove_unordered(sb, i) CONSTRUCT_da_remove_unordered((sb), i)
+#define CONSTRUCT_sb_foreach(it, da) CONSTRUCT_da_foreach(char, it, da)
 #define CONSTRUCT_sb_reset(sb) CONSTRUCT_da_reset((sb))
 #define CONSTRUCT_sb_free(sb) CONSTRUCT_da_free((sb))
 
-#define CONSTRUCT_sb_last(sb) CONSTRUCT_da_last((sb))
-#define CONSTRUCT_sb_remove_unordered(sb, i) CONSTRUCT_da_remove_unordered((sb), i)
-#define CONSTRUCT_sb_foreach(it, da) CONSTRUCT_da_foreach(char, it, da)
-
+#define CONSTRUCT_sb_len(sb) (sb)->count
 #define CONSTRUCT_SB_Fmt "%.*s"
 #define CONSTRUCT_SB_Arg(sb) (int)(sb)->count, (sb)->items
 
