@@ -3,19 +3,18 @@
     <h1>construct.h</h1>
 </div>
 
-A single-header C library for building projects with minimal dependencies using build recipes in C itself. Provides dynamic arrays, string manipulation, process management, and CONSTRUCT build system (similar to Make).
+A single-header C library for building projects with minimal dependencies using build recipes in C itself. Provides dynamic arrays, string builder and view, temp functions, cross-platform file handling, and CONSTRUCT build system (Make-style).
 
-Inspired by and simplified from [nob.h](https://github.com/tsoding/nob.h), with additional features.
+Inspired by and simplified from [nob.h](https://github.com/tsoding/nob.h).
 
 ## Features
 
 - Dynamic arrays with automatic growth/shrink
 - String builders and string views
 - Cross-platform file operations
-- Process and command execution (sync/async)
-- Build system with dependency tracking (CONSTRUCT)
-- Temporary string allocation
+- Temporary string functions
 - Logging utilities
+- Build system with dependency tracking (CONSTRUCT)
 - Header-only library
 
 ## Why construct.h?
@@ -29,148 +28,22 @@ construct.h lets you write build scripts in C with:
 - Full C language power
 - Cross-platform by default
 - Incremental builds (CONSTRUCT system)
-- Type safety and IDE support
 
-## Comparison with nob.h
+## CONSTRUCT Build System
 
-construct.h is a simplified and extended version of nob.h:
-
-Similarities:
-- Dynamic arrays
-- Command building and execution
-- String utilities
-- Process management
-
-Differences:
-- Added CONSTRUCT build system for make-like syntax
-- Simplified API
-- Less LOC and better code structure
-- Additional utilities (See additional features in Dynamic Arrays, Misc, Short cicuiting, String View)
-
-
-## Quick Start
+The build system tracks dependencies and rebuilds only when needed (Like Make):
 
 ```c
-#include "construct.h"
+    ConstructRules rules = {0};
 
-int main(void) {
-    Command cmd = {0};
-    command_append(&cmd, "gcc", "-o", "program", "main.c");
-    if (!command_run(&cmd)) {
-        print_log(ERROR, "Compilation failed");
-        return 1;
-    }
-    print_log(INFO, "Build successful");
+    ConstructRule rule = {SA("build/project"), SA("src/main.c"), 0};
+    command_append(&rule.command,"gcc", "src/main.c", "-o", "build/project", "-Wall -Wextra -Werror -O3");
+    da_append(&rules, rule);
+
+    if (!run_construct(&rules, true)) {print_log(ERROR, "Build failed"); return 1;}
+    print_log(INFO, "Build finished");
+
     return 0;
-}
-```
-
-Compile your build script:
-```bash
-gcc -o build build.c
-./build
-```
-or if you have `nct` installed, just replace build.h 
-
-## Core Components
-
-### Dynamic Arrays
-
-```c
-da_define(int, IntArray);
-IntArray arr = {0};
-
-da_append(&arr, 42);
-da_append(&arr, 123);
-
-printf("Count: %zu\n", arr.count);
-da_free(&arr);
-```
-
-### String Builder
-
-```c
-StringBuilder sb = {0};
-sb_append_str(&sb, "Hello ");
-sb_append_str(&sb, "World");
-sb_append_null(&sb);
-
-printf("%s\n", sb.items);
-sb_free(&sb);
-```
-
-### Commands
-
-```c
-Command cmd = {0};
-command_append(&cmd, "clang", "-Wall", "-o", "output", "input.c");
-
-// Synchronous
-command_run(&cmd);
-
-// Asynchronous
-Procs procs = {0};
-command_run(&cmd, .async = &procs, .max_procs = 4);
-procs_wait(&procs);
-```
-
-### File Operations
-
-```c
-if (!file_exists("config.txt")) {
-    print_log(WARNING, "Config not found");
-}
-
-if (is_newer("main.c", "main.o")) {
-    // Recompile
-}
-
-DABytes content = {0};
-read_entire_file("data.bin", &content);
-// Use content.items and content.count
-da_free(&content);
-```
-
-### CONSTRUCT Build System
-
-The build system tracks dependencies and rebuilds only when needed:
-
-```c
-ConstructRules rules = {0};
-
-// Rule: compile main.c -> main.o
-{
-    ConstructRule rule = {0};
-    rule.targets = (char*[]){"main.o"};
-    rule.targets_count = 1;
-    rule.dependencies = (char*[]){"main.c"};
-    rule.dependencies_count = 1;
-    
-    command_append(&rule.command_with_options.command, 
-                   "gcc", "-c", "main.c", "-o", "main.o");
-    
-    da_append(&rules, rule);
-}
-
-// Rule: link main.o -> program
-{
-    ConstructRule rule = {0};
-    rule.targets = (char*[]){"program"};
-    rule.targets_count = 1;
-    rule.dependencies = (char*[]){"main.o"};
-    rule.dependencies_count = 1;
-    
-    command_append(&rule.command_with_options.command,
-                   "gcc", "main.o", "-o", "program");
-    
-    da_append(&rules, rule);
-}
-
-// Run build system
-if (!run_construct(&rules)) {
-    print_log(ERROR, "Build failed");
-    return 1;
-}
 ```
 
 The build system:
@@ -179,10 +52,7 @@ The build system:
 - Runs commands only when targets are missing or out of date
 - Handles dependency chains automatically
 
+## TODO
 
-## Platform Support
+- Auto dependency scanning
 
-- Linux/Unix (tested on Linux, macOS)
-- Windows (MinGW, MSVC)
-
-All file operations, path handling, and process management work cross-platform.
