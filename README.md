@@ -3,7 +3,7 @@
     <h1>construct.h</h1>
 </div>
 
-A single-header C library for building projects with minimal dependencies using build recipes in C itself. Provides dynamic arrays, string builder and view, temp functions, cross-platform file handling, and CONSTRUCT build system (Make-style).
+A single-header C library for building projects with minimal dependencies using build recipes in C itself. Provides dynamic arrays, string builder and view, temp functions, cross-platform file handling, and CONSTRUCT build system (Make-style) with auto dependency scanning.
 
 Inspired by and simplified from [nob.h](https://github.com/tsoding/nob.h).
 
@@ -14,7 +14,7 @@ Inspired by and simplified from [nob.h](https://github.com/tsoding/nob.h).
 - Cross-platform file operations
 - Temporary string functions
 - Logging utilities
-- Build system with dependency tracking (CONSTRUCT)
+- Make like build with dependency scanning (CONSTRUCT)
 - Header-only library
 
 ## Why construct.h?
@@ -27,7 +27,7 @@ Traditional build systems have drawbacks:
 construct.h lets you write build scripts in C with:
 - Full C language power
 - Cross-platform by default
-- Incremental builds (CONSTRUCT system)
+- Incremental builds
 
 ## CONSTRUCT Build System
 
@@ -51,8 +51,5 @@ The build system:
 - Compares modification times
 - Runs commands only when targets are missing or out of date
 - Handles dependency chains automatically
-
-## TODO
-
-- Auto dependency scanning
+- Does dependency scanning in the source
 

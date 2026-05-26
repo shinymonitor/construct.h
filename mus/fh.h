@@ -2,6 +2,7 @@
 #define _MUS_FH_H
 
 #include "da.h"
+#include "sv.h"
 #include "log.h"
 #include <stdio.h>
 #include <string.h>
@@ -38,7 +39,7 @@
     #define MUS_MV_CMD "mv \"%s\" \"%s\""
 	#define MUS_RM_CMD "rm \"%s\""
 	#define MUS_RMDIR_CMD "rm -rf \"%s\""
-	#define MUS_FETCH_CMD "wget -q --show-progress \"%s\" -O \"%s\""
+	#define MUS_FETCH_CMD "wget -q --show-progress %s -O %s"
 #endif
 
 //================================================================
@@ -53,7 +54,16 @@ static inline bool MUS_is_newer(char* new_path, char* old_path){
 	if (new_mtime == 0 || old_mtime == 0) return true;
 	return new_mtime > old_mtime;
 }
-static inline const char* MUS_path_basename(const char* path){const char* p = strrchr(path, MUS_PS_CHR); return p ? p + 1 : path;}
+static inline MUS_StringView MUS_path_basename(const char* path){
+    const char* p = strrchr(path, MUS_PS_CHR); 
+    p = p ? p + 1 : path;
+    return (MUS_StringView){p, strlen(p)};
+}
+static inline MUS_StringView MUS_path_dirname(const char* path){
+    const char* p = strrchr(path, MUS_PS_CHR); 
+    p = p ? p + 1 : path;
+    return (MUS_StringView){path, p - path};
+}
 typedef struct {uint8_t* bytes; size_t bytes_count;} MUS_FileBytes;
 static inline bool MUS_read_entire_file(const char* file_path, MUS_FileBytes* file_bytes) {
     FILE* file_handle = fopen(file_path, "rb");
@@ -113,6 +123,7 @@ static inline bool MUS_fetch_file(const char* path, const char* url) {return (!s
         #define get_mtime MUS_get_mtime
         #define is_newer MUS_is_newer
         #define path_basename MUS_path_basename
+        #define path_dirname MUS_path_dirname
         #define mkdir_if_not_exists MUS_mkdir_if_not_exists
         #define copy_file MUS_copy_file
         #define copy_directory_recursively MUS_copy_directory_recursively

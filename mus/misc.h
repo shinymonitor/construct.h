@@ -26,7 +26,7 @@
 #endif
 #define MUS_CLOCK_START MUS_c1=clock()
 #define MUS_CLOCK_END MUS_c2=clock()
-#define MUS_CLOCK_SEC ((float)(MUS_c2 - MUS_c1))/CLOCKS_PER_SEC
+#define MUS_CLOCK_SEC (((float)(MUS_c2 - MUS_c1))/CLOCKS_PER_SEC)
 #define MUS_TIMER_START MUS_t1=time(NULL)
 #define MUS_TIMER_END MUS_t2=time(NULL)
 #define MUS_TIMER_SEC (MUS_t2 - MUS_t1)
